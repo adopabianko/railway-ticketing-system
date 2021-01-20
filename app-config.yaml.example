@@ -1,0 +1,16 @@
+app:
+    name: "Railway Ticketing System"
+    port: 3000
+
+mysql: "root:secret@tcp(127.0.0.1:3306)/railway_ticketing"
+
+email:
+    smtp_host: "smtp.gmail.com"
+    smtp_port: 587
+    sender_name: "Info"
+    auth_email: ""
+    auth_password: ""
+
+jwt-key: "TH7O6QWKRPJO91QRZ17YANB369CR39"
+
+redis: "redis://127.0.0.1:6379/0"
