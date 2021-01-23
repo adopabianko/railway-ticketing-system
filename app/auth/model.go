@@ -1,8 +1,8 @@
 package auth
 
 type Customer struct {
-	ID   		   string `json:"id,omitempty"`
-	CustomerCode   string `json:"customer_code"`
+	ID             string `json:"id,omitempty"`
+	CustomerCode   string `json:"customer_code,omitempty"`
 	FirstName      string `json:"first_name"`
 	LastName       string `json:"last_name"`
 	Email          string `json:"email"`

@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "schedule_schema_params",
+    "type": "object",
+    "description": "Schema user check schedule",
+    "required": [
+        "origin",
+        "destination",
+        "departure_date"
+    ],
+    "properties":{
+        "origin": {
+            "type": "string",
+            "minLength": 3
+        },
+        "destination": {
+            "type": "string",
+            "minLength": 3
+        },
+        "departure_date": {
+            "type": "string",
+            "format": "date"
+        }
+    }
+}
