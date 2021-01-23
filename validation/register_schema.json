@@ -1,0 +1,50 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "register_schema_params",
+    "type": "object",
+    "description": "Schema register new user",
+    "required": [
+        "first_name",
+        "last_name",
+        "email",
+        "phone_number",
+        "gender",
+        "birth_date",
+        "password"
+    ],
+    "properties":{
+        "first_name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 30
+        },
+        "last_name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 30
+        },
+        "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 50
+        },
+        "phone_number": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 30
+        },
+        "gender": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1
+        },
+        "birth_date": {
+            "type": "string",
+            "format": "date"
+        },
+        "password": {
+            "type": "string",
+            "minLength": 6
+        }
+    }
+}

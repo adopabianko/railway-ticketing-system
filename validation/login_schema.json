@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "login_schema_params",
+    "type": "object",
+    "description": "Schema user login",
+    "required": [
+        "email",
+        "password"
+    ],
+    "properties":{
+        "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 50
+        },
+        "password": {
+            "type": "string",
+            "minLength": 6
+        }
+    }
+}
