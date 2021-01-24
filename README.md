@@ -11,5 +11,5 @@
 
 ## Flow
 <p align="center">
-  <a href="https://user-images.githubusercontent.com/8348927/105623977-aabf7200-5e50-11eb-9472-b09034b4bcf7.png"><img alt="Railway Ticketing System" src="https://user-images.githubusercontent.com/8348927/105623977-aabf7200-5e50-11eb-9472-b09034b4bcf7.png" width="300"/></a>
+  <a href="https://user-images.githubusercontent.com/8348927/105623977-aabf7200-5e50-11eb-9472-b09034b4bcf7.png"><img alt="Railway Ticketing System" src="https://user-images.githubusercontent.com/8348927/105623977-aabf7200-5e50-11eb-9472-b09034b4bcf7.png" width="500"/></a>
 </p>
