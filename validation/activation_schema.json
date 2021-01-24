@@ -10,7 +10,7 @@
     "properties":{
         "customer_code": {
             "type": "string",
-            "minLength": 15
+            "minLength": 14
         },
         "activation_code": {
             "type": "string",

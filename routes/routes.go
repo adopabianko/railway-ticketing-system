@@ -5,9 +5,9 @@ import (
 
 	"github.com/adopabianko/train-ticketing/app/auth"
 	"github.com/adopabianko/train-ticketing/app/booking"
+	"github.com/adopabianko/train-ticketing/app/payment"
 	"github.com/adopabianko/train-ticketing/app/schedule"
 	"github.com/adopabianko/train-ticketing/app/station"
-	"github.com/adopabianko/train-ticketing/app/payment"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -32,6 +32,7 @@ func Routes() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}\n",
 	}))
+	e.Use(middleware.Recover())
 
 	secretKey := viper.Get("jwt-key")
 	configJwt := middleware.JWTConfig{

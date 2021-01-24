@@ -1,26 +1,23 @@
 package booking
 
-type BookingRequest struct {
-	ScheduleId string `json:"schedule_id"`
-	CustomerCode string `json:"customer_code"`
-	Qty uint16 `json:"qty"`
-	DepartureDate string `json:"departure_date"`
+type BookingParam struct {
+	ScheduleId    string      `json:"schedule_id"`
+	CustomerCode  string      `json:"customer_code"`
+	Qty           uint16      `json:"qty"`
+	DepartureDate string      `json:"departure_date"`
+	Passengers    []Passenger `json:"passengers"`
 }
 
 type Booking struct {
-	ID              string  `json:"id"`
-	BookingCode     string  `json:"booking_code"`
-	ScheduleId      string  `json:"schedule_id"`
-	DepartureDate   string  `json:"departure_date"`
-	Qty             uint16  `json:"qty"`
-	CustCode        string  `json:"cust_code"`
-	CustFirstName   string  `json:"cust_first_name"`
-	CustLastName    string  `json:"cust_last_name"`
-	CustEmail       string  `json:"cust_email"`
-	CustPhoneNumber string  `json:"cust_phone_number"`
-	Price           float32 `json:"price"`
-	Total           float32 `json:"total"`
-	ExpiredDate     string  `json:"expired_date"`
+	ID            string  `json:"id"`
+	ScheduleId    string  `json:"schedule_id"`
+	CustomerId    string  `json:"customer_id"`
+	BookingCode   string  `json:"booking_code"`
+	DepartureDate string  `json:"departure_date"`
+	Qty           uint16  `json:"qty"`
+	Price         float32 `json:"price"`
+	Total         float32 `json:"total"`
+	ExpiredDate   string  `json:"expired_date"`
 }
 
 type Schedule struct {
@@ -37,7 +34,18 @@ type Schedule struct {
 }
 
 type Customer struct {
+	ID           string `json:"id"`
 	CustomerCode string `json:"customer_code"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
+	Email        string `json:"email"`
+	PhoneNumber  string `json:"phone_number"`
+}
+
+type Passenger struct {
+	ID           string `json:"id"`
+	BookingID    string `json:"booking_id"`
+	TicketNumber string `json:"ticket_number"`
 	FirstName    string `json:"first_name"`
 	LastName     string `json:"last_name"`
 	Email        string `json:"email"`

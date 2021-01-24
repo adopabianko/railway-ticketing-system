@@ -23,7 +23,7 @@ func InitBookingController() *BookingController {
 }
 
 func (r *BookingController) BookingHandler(c echo.Context) error {
-	u := new(BookingRequest)
+	u := new(BookingParam)
 	if err := c.Bind(u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, echo.Map{
 			"code":    422,
@@ -53,7 +53,8 @@ func (r *BookingController) BookingHandler(c echo.Context) error {
 		}
 	}
 
-	httpCode, message, bookingCode := r.Service.BookingService(u.ScheduleId, u.DepartureDate, u.Qty, u.CustomerCode)
+	// Save booking data
+	httpCode, message, bookingCode := r.Service.BookingService(u)
 
 	if httpCode != 200 {
 		return c.JSON(httpCode, echo.Map{

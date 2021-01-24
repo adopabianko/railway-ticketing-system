@@ -1,11 +1,14 @@
 package booking
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/adopabianko/train-ticketing/database"
 )
 
 type IBookingService interface {
-	BookingService(id string, depDate string, qty uint16, csCode string) (int, string, interface{})
+	BookingService(bookingParam *BookingParam) (int, string, interface{})
 }
 
 type BookingService struct {
@@ -23,7 +26,18 @@ func InitBookingService() *BookingService {
 	return bookingService
 }
 
-func (s *BookingService) BookingService(id string, depDate string, qty uint16, csCode string) (httpCode int, message string, result interface{}) {
+func (s *BookingService) BookingService(bookingParam *BookingParam) (httpCode int, message string, result interface{}) {
+	id := bookingParam.ScheduleId
+	depDate := bookingParam.DepartureDate
+	qty := bookingParam.Qty
+	custCode := bookingParam.CustomerCode
+	passengers := bookingParam.Passengers
+
+	// Check total passengers and qty
+	if uint16(len(passengers)) != qty {
+		return 422, "Total passengers and qty is not same", nil
+	}
+
 	// Get schedule
 	resultSC, statusSC := s.Repository.FindScheduleByIdRepo(id)
 
@@ -31,15 +45,15 @@ func (s *BookingService) BookingService(id string, depDate string, qty uint16, c
 	if !statusSC {
 		return 404, "Schedule is not available", nil
 	} else if resultSC.Balance == 0 {
-		return 422, "Quota has run out", nil
+		return 422, "Ticket is sold out", nil
 	} else if resultSC.Balance < qty {
-		return 422, "Insufficient quota", nil
+		return 422, fmt.Sprintf("The only ticket left %d", resultSC.Balance), nil
 	} else if depDate >= resultSC.EndDate {
 		return 404, "Schedule is not available", nil
 	}
 
 	// Get data customer
-	resultCS, statusCs := s.Repository.FindCustomerByCustomercodeRepo(csCode)
+	resultCS, statusCs := s.Repository.FindCustomerByCustomercodeRepo(custCode)
 
 	// Customer validation
 	if !statusCs {
@@ -58,18 +72,42 @@ func (s *BookingService) BookingService(id string, depDate string, qty uint16, c
 	total = float32(qty) * price
 
 	booking := Booking{
-		ScheduleId:      id,
-		DepartureDate:   depDate,
-		Qty:             qty,
-		CustCode:        resultCS.CustomerCode,
-		CustFirstName:   resultCS.FirstName,
-		CustLastName:    resultCS.LastName,
-		CustEmail:       resultCS.Email,
-		CustPhoneNumber: resultCS.PhoneNumber,
-		Price:           price,
-		Total:           total,
+		ScheduleId:    id,
+		CustomerId:    resultCS.ID,
+		DepartureDate: depDate,
+		Qty:           qty,
+		Price:         price,
+		Total:         total,
 	}
-	
-	bookingCode := s.Repository.SaveBookingRepo(&booking)
+
+	bookingUuid, bookingCode := s.Repository.SaveBookingRepo(&booking)
+
+	// Insert data passenger
+	for i, p := range passengers {
+		var increment, digit int
+		increment = i + 1
+		digit = countDigit(increment)
+
+		var ticketNumber string
+		if digit == 1 {
+			ticketNumber = bookingCode + "00" + strconv.Itoa(increment)
+		} else if digit == 2 {
+			ticketNumber = bookingCode + "0" + strconv.Itoa(increment)
+		} else {
+			ticketNumber = bookingCode + strconv.Itoa(increment)
+		}
+
+		s.Repository.SavePassengerRepo(bookingUuid, ticketNumber, &p)
+	}
+
 	return 200, "Booking success", bookingCode
+}
+
+func countDigit(i int) (count int) {
+	for i != 0 {
+
+		i /= 10
+		count = count + 1
+	}
+	return count
 }

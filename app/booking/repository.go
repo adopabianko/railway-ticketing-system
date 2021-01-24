@@ -14,7 +14,8 @@ import (
 type IBookingRepository interface {
 	FindScheduleByIdRepo(id string) (Schedule, bool)
 	FindCustomerByCustomercodeRepo(csCode string) (Customer, bool)
-	SaveBookingRepo(booking *Booking) string
+	SaveBookingRepo(booking *Booking) (uuid.UUID, string)
+	SavePassengerRepo(bookingUuid uuid.UUID, ticketNumber string, passenger *Passenger)
 	UpdateBalanceQuotaRepo(id string, balance uint16)
 }
 
@@ -54,10 +55,11 @@ func (r *BookingRepository) FindCustomerByCustomercodeRepo(csCode string) (custo
 	defer db.Close()
 
 	err := db.QueryRow(`
-		SELECT first_name, last_name, email, phone_number
+		SELECT id, first_name, last_name, email, phone_number
 		FROM customer
 		WHERE customer_code = ?
 	`, csCode).Scan(
+		&customer.ID,
 		&customer.FirstName,
 		&customer.LastName,
 		&customer.Email,
@@ -75,7 +77,7 @@ func (r *BookingRepository) FindCustomerByCustomercodeRepo(csCode string) (custo
 	return customer, true
 }
 
-func (s *BookingRepository) SaveBookingRepo(booking *Booking) string{
+func (s *BookingRepository) SaveBookingRepo(booking *Booking) (uuid.UUID, string) {
 	db := s.MySQL.CreateConnection()
 	defer db.Close()
 
@@ -86,30 +88,22 @@ func (s *BookingRepository) SaveBookingRepo(booking *Booking) string{
 	_, err := db.Exec(`
 		INSERT INTO booking(
 			id,
-			booking_code,
 			schedule_id,
+			customer_id,
+			booking_code,
 			departure_date,
 			qty,
-			cust_code,
-			cust_first_name,
-			cust_last_name,
-			cust_email,
-			cust_phone_number,
 			price,
 			total,
 			expired_date
-		) VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?)
+		) VALUE(?,?,?,?,?,?,?,?,?)
 	`,
 		uuid,
-		bookingCode,
 		booking.ScheduleId,
+		booking.CustomerId,
+		bookingCode,
 		booking.DepartureDate,
 		booking.Qty,
-		booking.CustCode,
-		booking.CustFirstName,
-		booking.CustLastName,
-		booking.CustEmail,
-		booking.CustPhoneNumber,
 		booking.Price,
 		booking.Total,
 		expiredDate,
@@ -119,7 +113,7 @@ func (s *BookingRepository) SaveBookingRepo(booking *Booking) string{
 		log.Fatal(err.Error())
 	}
 
-	return bookingCode
+	return uuid, bookingCode
 }
 
 func (r *BookingRepository) UpdateBalanceQuotaRepo(id string, balance uint16) {
@@ -135,6 +129,37 @@ func (r *BookingRepository) UpdateBalanceQuotaRepo(id string, balance uint16) {
 	}
 }
 
+func (s *BookingRepository) SavePassengerRepo(bookingUuid uuid.UUID, ticketNumber string, passenger *Passenger) {
+	db := s.MySQL.CreateConnection()
+	defer db.Close()
+
+	uuid := uuid.New()
+
+	_, err := db.Exec(`
+		INSERT INTO passenger(
+			id,
+			booking_id,
+			ticket_number,
+			first_name,
+			last_name,
+			email,
+			phone_number
+		) VALUE(?,?,?,?,?,?,?)
+	`,
+		uuid,
+		bookingUuid,
+		ticketNumber,
+		passenger.FirstName,
+		passenger.LastName,
+		passenger.Email,
+		passenger.PhoneNumber,
+	)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+}
+
 func expiredDate() string {
 	t := time.Now()
 	return t.Add(time.Hour * 3).Format("2006-01-02 15:04:05")
@@ -142,7 +167,7 @@ func expiredDate() string {
 
 func generateBookingCode() string {
 	rand.Seed(time.Now().UnixNano())
-	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	length := 10
 
 	var b strings.Builder

@@ -19,11 +19,12 @@
             "format": "date"
         },
         "qty": {
-            "type": "integer"
+            "type": "integer",
+            "maximum": 10
         },
         "customer_code": {
             "type": "string",
-            "minLength": 15
+            "minLength": 14
         }
     }
 }

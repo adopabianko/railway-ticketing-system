@@ -23,25 +23,25 @@ DROP TABLE IF EXISTS `booking`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `booking` (
-  `id` varchar(255) NOT NULL,
-  `booking_code` varchar(30) NOT NULL,
-  `schedule_id` varchar(255) NOT NULL,
+  `id` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `schedule_id` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `booking_code` varchar(30) CHARACTER SET latin1 NOT NULL,
+  `customer_id` varchar(255) CHARACTER SET latin1 NOT NULL,
   `departure_date` date NOT NULL,
   `qty` int(11) NOT NULL,
-  `cust_code` varchar(30) NOT NULL,
-  `cust_first_name` varchar(100) NOT NULL,
-  `cust_last_name` varchar(100) NOT NULL,
-  `cust_email` varchar(100) NOT NULL,
-  `cust_phone_number` varchar(50) NOT NULL,
   `price` decimal(10,0) NOT NULL,
   `total` decimal(10,0) NOT NULL,
   `expired_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `booking_status` varchar(30) NOT NULL DEFAULT 'Booked',
+  `booking_status` varchar(30) CHARACTER SET latin1 NOT NULL DEFAULT 'Booked',
   `booked_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `paid_at` timestamp NULL DEFAULT NULL,
   `expired_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`),
+  KEY `booking_FK` (`schedule_id`),
+  KEY `booking_FK_1` (`customer_id`),
+  CONSTRAINT `booking_FK` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `booking_FK_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,21 +61,21 @@ DROP TABLE IF EXISTS `customer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `customer` (
-  `id` varchar(255) NOT NULL,
-  `customer_code` varchar(30) NOT NULL,
-  `first_name` varchar(100) NOT NULL,
-  `last_name` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `phone_number` varchar(50) NOT NULL,
-  `gender` enum('m','f') NOT NULL,
+  `id` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `customer_code` varchar(30) CHARACTER SET latin1 NOT NULL,
+  `first_name` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `last_name` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `email` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `phone_number` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `gender` enum('m','f') CHARACTER SET latin1 NOT NULL,
   `birth_date` date NOT NULL,
-  `activation_code` varchar(6) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `activation_code` varchar(6) CHARACTER SET latin1 NOT NULL,
+  `password` varchar(255) CHARACTER SET latin1 NOT NULL,
   `status_active` int(11) DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -84,7 +84,40 @@ CREATE TABLE `customer` (
 
 LOCK TABLES `customer` WRITE;
 /*!40000 ALTER TABLE `customer` DISABLE KEYS */;
+INSERT INTO `customer` VALUES ('40129f30-b5a3-4cdd-88cb-a1da278eb5cc','20210124807236','Ado','Pabianko','adopabianko@gmail.com','087874083220','m','1992-01-06','76767B','$2a$10$yaJuCYtrMoK4zUQo7yR7L.5zFhJKd19vDzhwUq.PYA7BxC9pmU6CC',1,'2021-01-23 22:47:35','2021-01-23 22:48:46');
 /*!40000 ALTER TABLE `customer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `passenger`
+--
+
+DROP TABLE IF EXISTS `passenger`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `passenger` (
+  `id` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `booking_id` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `ticket_number` varchar(30) NOT NULL,
+  `first_name` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `last_name` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `email` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `phone_number` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `passenger_FK` (`booking_id`),
+  CONSTRAINT `passenger_FK` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `passenger`
+--
+
+LOCK TABLES `passenger` WRITE;
+/*!40000 ALTER TABLE `passenger` DISABLE KEYS */;
+/*!40000 ALTER TABLE `passenger` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -95,10 +128,10 @@ DROP TABLE IF EXISTS `schedule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `schedule` (
-  `id` varchar(255) NOT NULL,
-  `origin` varchar(30) NOT NULL,
-  `destination` varchar(30) NOT NULL,
-  `train_code` varchar(30) NOT NULL,
+  `id` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `origin` varchar(30) CHARACTER SET latin1 NOT NULL,
+  `destination` varchar(30) CHARACTER SET latin1 NOT NULL,
+  `train_code` varchar(30) CHARACTER SET latin1 NOT NULL,
   `time` time NOT NULL,
   `quota` int(11) NOT NULL,
   `balance` int(11) NOT NULL,
@@ -109,7 +142,7 @@ CREATE TABLE `schedule` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -118,7 +151,7 @@ CREATE TABLE `schedule` (
 
 LOCK TABLES `schedule` WRITE;
 /*!40000 ALTER TABLE `schedule` DISABLE KEYS */;
-INSERT INTO `schedule` VALUES ('1b4750d7-598b-11eb-b2cb-0242ac120003','PDL','GMR','KA002','15:00:00',100,100,75000,1,'2021-01-01','2022-01-01','2021-01-18 12:45:55','2021-01-18 12:45:55'),('56ca1c7d-598b-11eb-b2cb-0242ac120003','PDL','GMR','KA004','16:00:00',100,100,75000,1,'2021-01-01','2022-01-01','2021-01-18 12:47:35','2021-01-18 12:47:35'),('5a976b0a-598b-11eb-b2cb-0242ac120003','PDL','GMR','KA005','17:00:00',100,100,75000,1,'2021-01-01','2022-01-01','2021-01-18 12:47:42','2021-01-18 12:47:42'),('8c6ae736-597e-11eb-b2cb-0242ac120003','PDL','GMR','KA001','14:00:00',100,88,75000,1,'2021-01-01','2022-01-01','2021-01-18 11:16:02','2021-01-19 05:21:41');
+INSERT INTO `schedule` VALUES ('1b4750d7-598b-11eb-b2cb-0242ac120003','PDL','GMR','KA002','15:00:00',100,100,75000,1,'2021-01-01','2022-01-01','2021-01-18 12:45:55','2021-01-18 12:45:55'),('56ca1c7d-598b-11eb-b2cb-0242ac120003','PDL','GMR','KA004','16:00:00',100,100,75000,1,'2021-01-01','2022-01-01','2021-01-18 12:47:35','2021-01-18 12:47:35'),('5a976b0a-598b-11eb-b2cb-0242ac120003','PDL','GMR','KA005','17:00:00',100,100,75000,1,'2021-01-01','2022-01-01','2021-01-18 12:47:42','2021-01-18 12:47:42'),('8c6ae736-597e-11eb-b2cb-0242ac120003','PDL','GMR','KA001','14:00:00',100,0,75000,1,'2021-01-01','2022-01-01','2021-01-18 11:16:02','2021-01-24 03:38:36');
 /*!40000 ALTER TABLE `schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -130,14 +163,14 @@ DROP TABLE IF EXISTS `station`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `station` (
-  `id` varchar(255) NOT NULL,
-  `station_code` varchar(30) NOT NULL,
-  `station_name` varchar(100) NOT NULL,
-  `station_city` varchar(100) DEFAULT NULL,
+  `id` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `station_code` varchar(30) CHARACTER SET latin1 NOT NULL,
+  `station_name` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `station_city` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -158,13 +191,13 @@ DROP TABLE IF EXISTS `train`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `train` (
-  `id` varchar(255) NOT NULL,
-  `train_code` varchar(30) NOT NULL,
-  `train_name` varchar(100) NOT NULL,
+  `id` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `train_code` varchar(30) CHARACTER SET latin1 NOT NULL,
+  `train_name` varchar(100) CHARACTER SET latin1 NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,4 +219,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-01-20 23:00:38
+-- Dump completed on 2021-01-24 10:47:11
