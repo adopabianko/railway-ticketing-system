@@ -4,7 +4,7 @@
 
 ## Database Design
 <p align="center">
-  <a href="#"><img alt="Railway Ticketing System" src="https://user-images.githubusercontent.com/8348927/105623894-f32a6000-5e4f-11eb-8f0c-fad0cbd5dd20.png" width="300"/></a>
+  <a href="#"><img alt="Railway Ticketing System" src="https://user-images.githubusercontent.com/8348927/105623894-f32a6000-5e4f-11eb-8f0c-fad0cbd5dd20.png" width="500"/></a>
 </p>
 
 
