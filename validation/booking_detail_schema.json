@@ -4,14 +4,9 @@
   "type": "object",
   "description": "Schema booking detail",
   "required": [
-    "customer_code",
     "booking_code"
   ],
   "properties":{
-    "customer_code": {
-      "type": "string",
-      "minLength": 14
-    },
     "booking_code": {
       "type": "string",
       "minLength": 10

@@ -10,7 +10,7 @@ import (
 
 type IBookingService interface {
 	BookingService(bookingParam *BookingRequest) (int, string, interface{})
-	FindBookingDetailService(csCode, bookingcode string) (httpCode int, message string, result interface{})
+	FindBookingDetailService(bookingcode string) (httpCode int, message string, result interface{})
 }
 
 type BookingService struct {
@@ -105,8 +105,8 @@ func (s *BookingService) BookingService(bookingParam *BookingRequest) (httpCode 
 	return 200, "Booking success", bookingCode
 }
 
-func (s *BookingService) FindBookingDetailService(csCode, bookingCode string) (httpCode int, message string, result interface{}) {
-	bookingDetailData, statusBooking := s.Repository.FindBookingDetailRepo(csCode, bookingCode)
+func (s *BookingService) FindBookingDetailService(bookingCode string) (httpCode int, message string, result interface{}) {
+	bookingDetailData, statusBooking := s.Repository.FindBookingDetailRepo(bookingCode)
 
 	if !statusBooking {
 		return 404, "Booking is not found", nil

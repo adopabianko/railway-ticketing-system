@@ -17,7 +17,7 @@ type IBookingRepository interface {
 	SaveBookingRepo(booking *Booking) (uuid.UUID, string)
 	SavePassengerRepo(bookingUuid uuid.UUID, ticketNumber string, passenger *Passenger)
 	UpdateBalanceQuotaRepo(id string, balance uint16)
-	FindBookingDetailRepo(csCode, bookingCode string) (Booking, bool)
+	FindBookingDetailRepo(bookingCode string) (Booking, bool)
 	FindPassengerRepo(bookingId string) ([]Passenger, bool)
 }
 
@@ -162,7 +162,7 @@ func (r *BookingRepository) SavePassengerRepo(bookingUuid uuid.UUID, ticketNumbe
 	}
 }
 
-func (r *BookingRepository)FindBookingDetailRepo(csCode, bookingCode string) (booking Booking, status bool) {
+func (r *BookingRepository)FindBookingDetailRepo(bookingCode string) (booking Booking, status bool) {
 	db := r.MySQL.CreateConnection()
 	defer db.Close()
 
@@ -189,9 +189,8 @@ func (r *BookingRepository)FindBookingDetailRepo(csCode, bookingCode string) (bo
 		FROM booking as aa
 		JOIN customer as bb on aa.customer_id = bb.id
 		JOIN schedule as cc on aa.schedule_id = cc.id
-		WHERE bb.customer_code = ?
 		AND aa.booking_code = ?
-	`, csCode, bookingCode).Scan(
+	`, bookingCode).Scan(
 		&booking.ID,
 		&booking.Customer.CustomerCode,
 		&booking.Customer.FirstName,

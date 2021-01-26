@@ -73,13 +73,11 @@ func (r *BookingController) BookingHandler(c echo.Context) error {
 }
 
 func (r *BookingController) FindBookingDetail(c echo.Context) error {
-	csCode := c.QueryParam("customer_code")
 	bookingCode := c.QueryParam("booking_code")
 
 	schemaLoader := gojsonschema.NewReferenceLoader("file://./validation/booking_detail_schema.json")
 
 	m := map[string]interface{}{
-		"customer_code": csCode,
 		"booking_code":  bookingCode,
 	}
 	documentLoader := gojsonschema.NewGoLoader(m)
@@ -98,7 +96,7 @@ func (r *BookingController) FindBookingDetail(c echo.Context) error {
 		}
 	}
 
-	httpCode, message, result := r.Service.FindBookingDetailService(csCode, bookingCode)
+	httpCode, message, result := r.Service.FindBookingDetailService(bookingCode)
 
 	if httpCode != 200 {
 		return c.JSON(httpCode, echo.Map{
