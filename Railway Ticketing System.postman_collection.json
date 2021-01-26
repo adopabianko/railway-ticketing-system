@@ -1,0 +1,280 @@
+{
+	"info": {
+		"_postman_id": "71945ea6-7bd7-43f4-b2b1-bd6a6a606ea0",
+		"name": "Railway Ticketing System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"Ado\",\n    \"last_name\": \"Pabianko\",\n    \"email\": \"adopabianko@gmail.com\",\n    \"phone_number\": \"087874083220\",\n    \"gender\": \"m\",\n    \"birth_date\": \"1992-01-06\",\n    \"password\": \"secret\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Activation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer_code\": \"20210124807236\",\n    \"activation_code\": \"76767B\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/activation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"activation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"adopabianko@gmail.com\",\n    \"password\": \"secret\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Station",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NfdXVpZCI6IjJmYjhkYzQ4LWU0M2EtNDU4MC1iMWI5LTM2NmY4YTVkN2I5ZCIsImN1c3RvbWVyX2NvZGUiOiIyMDIxMDExNjExMDc4MSJ9.lBBanOjdCB-HzZHgTC_KsU38T0Rn5_2VWnncocWJnjM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/station",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"station"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Schedule",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NfdXVpZCI6ImUxNjQ2ODNlLTFmNDctNDZiYy1iOTU2LTQyYTdjYjllOTJmNiIsImN1c3RvbWVyX2NvZGUiOiIyMDIxMDExNjExMDc4MSJ9.FaF38icFt5UFYO_cRl6AbsZN-07uEqBpVUv9D9F_P9Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/schedule?origin=PDL&destination=GMR&departure_date=2021-01-20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"schedule"
+					],
+					"query": [
+						{
+							"key": "origin",
+							"value": "PDL"
+						},
+						{
+							"key": "destination",
+							"value": "GMR"
+						},
+						{
+							"key": "departure_date",
+							"value": "2021-01-20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Booking",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NfdXVpZCI6ImUxNjQ2ODNlLTFmNDctNDZiYy1iOTU2LTQyYTdjYjllOTJmNiIsImN1c3RvbWVyX2NvZGUiOiIyMDIxMDExNjExMDc4MSJ9.FaF38icFt5UFYO_cRl6AbsZN-07uEqBpVUv9D9F_P9Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"schedule_id\": \"8c6ae736-597e-11eb-b2cb-0242ac120003\",\n    \"departure_date\": \"2021-01-30\",\n    \"qty\":2,\n    \"customer_code\": \"20210124807236\",\n    \"passengers\": [\n        {\n            \"first_name\": \"Ado\",\n            \"last_name\": \"Pabianko\",\n            \"email\": \"adopabianko@gmail.com\",\n            \"phone_number\": \"087874083220\"\n        },\n        {\n            \"first_name\": \"Jhon\",\n            \"last_name\": \"Doe\",\n            \"email\": \"jhondoe@gmail.com\",\n            \"phone_number\": \"087874083221\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/booking",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NfdXVpZCI6ImUxNjQ2ODNlLTFmNDctNDZiYy1iOTU2LTQyYTdjYjllOTJmNiIsImN1c3RvbWVyX2NvZGUiOiIyMDIxMDExNjExMDc4MSJ9.FaF38icFt5UFYO_cRl6AbsZN-07uEqBpVUv9D9F_P9Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"booking_code\": \"QLOJIYVCOR\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/payment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"payment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Booking Detail",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NfdXVpZCI6ImUxNjQ2ODNlLTFmNDctNDZiYy1iOTU2LTQyYTdjYjllOTJmNiIsImN1c3RvbWVyX2NvZGUiOiIyMDIxMDExNjExMDc4MSJ9.FaF38icFt5UFYO_cRl6AbsZN-07uEqBpVUv9D9F_P9Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/booking/detail?booking_code=QLOJIYVCOR",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"booking",
+						"detail"
+					],
+					"query": [
+						{
+							"key": "booking_code",
+							"value": "QLOJIYVCOR"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
