@@ -2,13 +2,15 @@ package booking
 
 import (
 	"fmt"
+	"github.com/labstack/echo"
 	"strconv"
 
 	"github.com/adopabianko/train-ticketing/database"
 )
 
 type IBookingService interface {
-	BookingService(bookingParam *BookingParam) (int, string, interface{})
+	BookingService(bookingParam *BookingRequest) (int, string, interface{})
+	FindBookingDetailService(csCode, bookingcode string) (httpCode int, message string, result interface{})
 }
 
 type BookingService struct {
@@ -26,7 +28,7 @@ func InitBookingService() *BookingService {
 	return bookingService
 }
 
-func (s *BookingService) BookingService(bookingParam *BookingParam) (httpCode int, message string, result interface{}) {
+func (s *BookingService) BookingService(bookingParam *BookingRequest) (httpCode int, message string, result interface{}) {
 	id := bookingParam.ScheduleId
 	depDate := bookingParam.DepartureDate
 	qty := bookingParam.Qty
@@ -101,6 +103,21 @@ func (s *BookingService) BookingService(bookingParam *BookingParam) (httpCode in
 	}
 
 	return 200, "Booking success", bookingCode
+}
+
+func (s *BookingService) FindBookingDetailService(csCode, bookingCode string) (httpCode int, message string, result interface{}) {
+	bookingDetailData, statusBooking := s.Repository.FindBookingDetailRepo(csCode, bookingCode)
+
+	if !statusBooking {
+		return 404, "Booking is not found", nil
+	}
+
+	passengers, _ := s.Repository.FindPassengerRepo(bookingDetailData.ID)
+
+	return 200, "Booking data", echo.Map{
+		"booking": bookingDetailData,
+		"passengers": passengers,
+	}
 }
 
 func countDigit(i int) (count int) {

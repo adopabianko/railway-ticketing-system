@@ -53,6 +53,7 @@ func Routes() {
 	e.GET("/station", stationController.StationHandler, middleware.JWTWithConfig(configJwt))
 	e.GET("/schedule", scheduleController.ScheduleHandler, middleware.JWTWithConfig(configJwt))
 	e.POST("/booking", bookingController.BookingHandler, middleware.JWTWithConfig(configJwt))
+	e.GET("/booking/detail", bookingController.FindBookingDetail, middleware.JWTWithConfig(configJwt))
 	e.POST("/payment", paymentController.PaymentHandler, middleware.JWTWithConfig(configJwt))
 
 	e.Logger.Fatal(e.Start(":3000"))

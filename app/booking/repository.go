@@ -17,6 +17,8 @@ type IBookingRepository interface {
 	SaveBookingRepo(booking *Booking) (uuid.UUID, string)
 	SavePassengerRepo(bookingUuid uuid.UUID, ticketNumber string, passenger *Passenger)
 	UpdateBalanceQuotaRepo(id string, balance uint16)
+	FindBookingDetailRepo(csCode, bookingCode string) (Booking, bool)
+	FindPassengerRepo(bookingId string) ([]Passenger, bool)
 }
 
 type BookingRepository struct {
@@ -77,8 +79,8 @@ func (r *BookingRepository) FindCustomerByCustomercodeRepo(csCode string) (custo
 	return customer, true
 }
 
-func (s *BookingRepository) SaveBookingRepo(booking *Booking) (uuid.UUID, string) {
-	db := s.MySQL.CreateConnection()
+func (r *BookingRepository) SaveBookingRepo(booking *Booking) (uuid.UUID, string) {
+	db := r.MySQL.CreateConnection()
 	defer db.Close()
 
 	uuid := uuid.New()
@@ -129,8 +131,8 @@ func (r *BookingRepository) UpdateBalanceQuotaRepo(id string, balance uint16) {
 	}
 }
 
-func (s *BookingRepository) SavePassengerRepo(bookingUuid uuid.UUID, ticketNumber string, passenger *Passenger) {
-	db := s.MySQL.CreateConnection()
+func (r *BookingRepository) SavePassengerRepo(bookingUuid uuid.UUID, ticketNumber string, passenger *Passenger) {
+	db := r.MySQL.CreateConnection()
 	defer db.Close()
 
 	uuid := uuid.New()
@@ -158,6 +160,111 @@ func (s *BookingRepository) SavePassengerRepo(bookingUuid uuid.UUID, ticketNumbe
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+}
+
+func (r *BookingRepository)FindBookingDetailRepo(csCode, bookingCode string) (booking Booking, status bool) {
+	db := r.MySQL.CreateConnection()
+	defer db.Close()
+
+	// Get data booking
+	err := db.QueryRow(`
+		SELECT
+		    aa.id,
+			bb.customer_code,
+			bb.first_name,
+			bb.last_name,
+			bb.email,
+			bb.phone_number,
+			aa.booking_code,
+			aa.departure_date,
+			cc.origin,
+			cc.destination,
+			cc.train_code,
+			cc.time,
+			aa.qty,
+			aa.price,
+			aa.total,
+			aa.booking_status,
+			aa.booked_at
+		FROM booking as aa
+		JOIN customer as bb on aa.customer_id = bb.id
+		JOIN schedule as cc on aa.schedule_id = cc.id
+		WHERE bb.customer_code = ?
+		AND aa.booking_code = ?
+	`, csCode, bookingCode).Scan(
+		&booking.ID,
+		&booking.Customer.CustomerCode,
+		&booking.Customer.FirstName,
+		&booking.Customer.LastName,
+		&booking.Customer.Email,
+		&booking.Customer.PhoneNumber,
+		&booking.BookingCode,
+		&booking.DepartureDate,
+		&booking.Schedule.Origin,
+		&booking.Schedule.Destination,
+		&booking.Schedule.TrainCode,
+		&booking.Schedule.Time,
+		&booking.Qty,
+		&booking.Price,
+		&booking.Total,
+		&booking.BookingStatus,
+		&booking.BookedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return booking, false
+		}
+
+		log.Fatal(err.Error())
+	}
+
+	return booking, true
+}
+
+func (r *BookingRepository)FindPassengerRepo(bookingId string) (passengers []Passenger, status bool) {
+	db := r.MySQL.CreateConnection()
+	defer db.Close()
+
+	// Get data passenger
+	rows, err := db.Query(`
+		SELECT 
+		    ticket_number,
+			first_name,
+		    last_name,
+		    email,
+		    phone_number
+		FROM passenger
+		where booking_id = ?
+		ORDER BY ticket_number ASC
+	`, bookingId)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows.Next() {
+		var ps Passenger
+		err = rows.Scan(
+			&ps.TicketNumber,
+			&ps.FirstName,
+			&ps.LastName,
+			&ps.Email,
+			&ps.PhoneNumber,
+		)
+
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		passengers = append(passengers, ps)
+	}
+
+	if len(passengers) == 0 {
+		return passengers, false
+	}
+
+	return passengers, true
 }
 
 func expiredDate() string {
