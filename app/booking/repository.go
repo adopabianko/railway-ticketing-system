@@ -2,13 +2,10 @@ package booking
 
 import (
 	"database/sql"
-	"log"
-	"math/rand"
-	"strings"
-	"time"
-
 	"github.com/adopabianko/train-ticketing/database"
+	"github.com/adopabianko/train-ticketing/utils"
 	"github.com/google/uuid"
+	"log"
 )
 
 type IBookingRepository interface {
@@ -84,8 +81,8 @@ func (r *BookingRepository) SaveBookingRepo(booking *Booking) (uuid.UUID, string
 	defer db.Close()
 
 	uuid := uuid.New()
-	bookingCode := generateBookingCode()
-	expiredDate := expiredDate()
+	bookingCode := utils.GenerateBookingCode()
+	expiredDate := utils.ExpiredDate()
 
 	_, err := db.Exec(`
 		INSERT INTO booking(
@@ -162,7 +159,7 @@ func (r *BookingRepository) SavePassengerRepo(bookingUuid uuid.UUID, ticketNumbe
 	}
 }
 
-func (r *BookingRepository)FindBookingDetailRepo(bookingCode string) (booking Booking, status bool) {
+func (r *BookingRepository) FindBookingDetailRepo(bookingCode string) (booking Booking, status bool) {
 	db := r.MySQL.CreateConnection()
 	defer db.Close()
 
@@ -221,7 +218,7 @@ func (r *BookingRepository)FindBookingDetailRepo(bookingCode string) (booking Bo
 	return booking, true
 }
 
-func (r *BookingRepository)FindPassengerRepo(bookingId string) (passengers []Passenger, status bool) {
+func (r *BookingRepository) FindPassengerRepo(bookingId string) (passengers []Passenger, status bool) {
 	db := r.MySQL.CreateConnection()
 	defer db.Close()
 
@@ -266,21 +263,3 @@ func (r *BookingRepository)FindPassengerRepo(bookingId string) (passengers []Pas
 	return passengers, true
 }
 
-func expiredDate() string {
-	t := time.Now()
-	return t.Add(time.Hour * 3).Format("2006-01-02 15:04:05")
-}
-
-func generateBookingCode() string {
-	rand.Seed(time.Now().UnixNano())
-	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-	length := 10
-
-	var b strings.Builder
-
-	for i := 0; i < length; i++ {
-		b.WriteRune(chars[rand.Intn(len(chars))])
-	}
-
-	return b.String()
-}

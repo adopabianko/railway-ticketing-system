@@ -3,9 +3,8 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/adopabianko/train-ticketing/utils"
 	"net/http"
-
-	"github.com/adopabianko/train-ticketing/jwt"
 
 	"log"
 
@@ -151,7 +150,7 @@ func (r *AuthController) LoginHandler(c echo.Context) error {
 		})
 	}
 
-	accessToken := jwt.CreateAccessToken(result.CustomerCode)
+	accessToken := utils.CreateAccessToken(result.CustomerCode)
 
 	return c.JSON(httpCode, echo.Map{
 		"code":    httpCode,

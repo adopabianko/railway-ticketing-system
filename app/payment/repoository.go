@@ -2,8 +2,8 @@ package payment
 
 import (
 	"github.com/adopabianko/train-ticketing/database"
+	"github.com/adopabianko/train-ticketing/utils"
 	"log"
-	"time"
 )
 
 type IPaymentRepository interface {
@@ -21,14 +21,9 @@ func (r *PaymentRepository)UpdatePaymentStatusRepo(bookingCode string){
 	_, err := db.Exec(`
 		UPDATE booking SET booking_status = 'Paid', paid_at = ?
 		WHERE booking_code = ?
-	`, dateNow(), bookingCode)
+	`, utils.DateNow(), bookingCode)
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-}
-
-func dateNow() string {
-	t := time.Now()
-	return t.Format("2006-01-02 15:04:05")
 }

@@ -3,11 +3,9 @@ package auth
 import (
 	"database/sql"
 	"log"
-	"math/rand"
-	"strings"
-	"time"
 
 	"github.com/adopabianko/train-ticketing/database"
+	"github.com/adopabianko/train-ticketing/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -105,8 +103,8 @@ func (r *AuthRepository) SaveRepo(customer *Customer) (status bool, id uuid.UUID
 
 	uuid := uuid.New()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(customer.Password), bcrypt.DefaultCost)
-	activationCode := generateActivationcode()
-	customerCode := generateCustomerCode()
+	activationCode := utils.GenerateActivationcode()
+	customerCode := utils.GenerateCustomerCode()
 
 	_, err = db.Exec(`INSERT INTO 
     		customer(
@@ -179,35 +177,4 @@ func (r *AuthRepository) UpdateStatusActive(customerCode, activationCode string)
 	}
 
 	return true
-}
-
-func generateCustomerCode() string {
-	t := time.Now()
-	var dateNow string = t.Format("20060102")
-
-	rand.Seed(t.UnixNano())
-	chars := []rune("0123456789")
-	length := 6
-
-	var b strings.Builder
-
-	for i := 0; i < length; i++ {
-		b.WriteRune(chars[rand.Intn(len(chars))])
-	}
-
-	return dateNow + b.String()
-}
-
-func generateActivationcode() string {
-	rand.Seed(time.Now().UnixNano())
-	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-	length := 6
-
-	var b strings.Builder
-
-	for i := 0; i < length; i++ {
-		b.WriteRune(chars[rand.Intn(len(chars))])
-	}
-
-	return b.String()
 }

@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/adopabianko/train-ticketing/database"
+	"github.com/adopabianko/train-ticketing/utils"
 )
 
 type IBookingService interface {
@@ -88,7 +89,7 @@ func (s *BookingService) BookingService(bookingParam *BookingRequest) (httpCode 
 	for i, p := range passengers {
 		var increment, digit int
 		increment = i + 1
-		digit = countDigit(increment)
+		digit = utils.CountDigit(increment)
 
 		var ticketNumber string
 		if digit == 1 {
@@ -118,13 +119,4 @@ func (s *BookingService) FindBookingDetailService(bookingCode string) (httpCode 
 		"booking": bookingDetailData,
 		"passengers": passengers,
 	}
-}
-
-func countDigit(i int) (count int) {
-	for i != 0 {
-
-		i /= 10
-		count = count + 1
-	}
-	return count
 }
