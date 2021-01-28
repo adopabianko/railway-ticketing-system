@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/adopabianko/train-ticketing/app/auth"
@@ -42,7 +43,7 @@ func Routes() {
 
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"app":     "Railway Ticketing System",
+			"app":     viper.Get("app.name"),
 			"version": "0.0.1",
 		})
 	})
@@ -56,5 +57,7 @@ func Routes() {
 	e.GET("/booking/detail", bookingController.FindBookingDetail, middleware.JWTWithConfig(configJwt))
 	e.POST("/payment", paymentController.PaymentHandler, middleware.JWTWithConfig(configJwt))
 
-	e.Logger.Fatal(e.Start(":3000"))
+	port := fmt.Sprintf("%d", viper.Get("app.port"))
+
+	e.Logger.Fatal(e.Start(":" + port))
 }
