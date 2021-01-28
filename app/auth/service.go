@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/adopabianko/train-ticketing/utils"
 	"log"
 
 	"github.com/adopabianko/train-ticketing/database"
@@ -45,6 +46,12 @@ func (s *AuthService) RegisterService(customer *Customer) (httpCode int, message
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	var subject, content string
+	subject = "Activation Code";
+	content = "Berikut kode aktifasi anda <strong>"+result.ActivationCode+"</strong>";
+
+	utils.SendEmail(customer.Email, subject, content)
 
 	return 200, "Register success", result
 }
