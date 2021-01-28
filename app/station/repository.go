@@ -20,6 +20,8 @@ type StationRepository struct {
 	Redis database.IRedisConnection
 }
 
+var ctx = context.Background()
+
 func (r *StationRepository) FindAllStationRepo() (stations []Station, status bool) {
 	db := r.MySQL.CreateConnection()
 	defer db.Close()
@@ -66,7 +68,6 @@ func (r *StationRepository) FindAllStationRepo() (stations []Station, status boo
 func (r *StationRepository) FindAllStationRedisRepo() (stations []Station, status bool) {
 	cache := r.Redis.CreateConnection()
 
-	var ctx = context.Background()
 	resultCache, err := cache.Get(ctx, "station:all").Result()
 
 	if err == redis.Nil {
@@ -90,7 +91,6 @@ func (r *StationRepository) CacheAllStationRepo(value interface{}) {
 		log.Fatal(err.Error())
 	}
 
-	var ctx = context.Background()
 	err = cache.Set(ctx, "station:all", valueJson, 0).Err()
 
 	if err != nil {
