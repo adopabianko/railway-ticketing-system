@@ -42,7 +42,7 @@ func Routes() {
 
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"service": "auth",
+			"app":     "Railway Ticketing System",
 			"version": "0.0.1",
 		})
 	})
