@@ -10,9 +10,9 @@ import (
 )
 
 type IScheduleRepository interface {
-	FindAllScheduleRepo(string, string, string) ([]Schedule, bool)
-	FindAllScheduleRedisRepo() ([]Schedule, bool)
-	CacheAllScheduleRepo(value interface{})
+	FindScheduleRepo(org, des, depDate string) ([]Schedule, bool)
+	FindScheduleRedisRepo(org, des, depDate string) ([]Schedule, bool)
+	CacheScheduleRepo(org, des, depDate string, value interface{})
 }
 
 type ScheduleRepository struct {
@@ -20,7 +20,7 @@ type ScheduleRepository struct {
 	Redis database.IRedisConnection
 }
 
-func (r *ScheduleRepository) FindAllScheduleRepo(org, des, depDate string) (schedules []Schedule, status bool) {
+func (r *ScheduleRepository) FindScheduleRepo(org, des, depDate string) (schedules []Schedule, status bool) {
 	db := r.MySQL.CreateConnection()
 	defer db.Close()
 
@@ -80,11 +80,11 @@ func (r *ScheduleRepository) FindAllScheduleRepo(org, des, depDate string) (sche
 	return schedules, true
 }
 
-func (r *ScheduleRepository) FindAllScheduleRedisRepo() (schedules []Schedule, status bool) {
+func (r *ScheduleRepository) FindScheduleRedisRepo(org, des, depDate string) (schedules []Schedule, status bool) {
 	cache := r.Redis.CreateConnection()
 
 	var ctx = context.Background()
-	resultCache, err := cache.Get(ctx, "schedule:all").Result()
+	resultCache, err := cache.Get(ctx, "schedule:"+org+":"+des+":"+depDate).Result()
 
 	if err == redis.Nil {
 		return schedules, false
@@ -99,7 +99,7 @@ func (r *ScheduleRepository) FindAllScheduleRedisRepo() (schedules []Schedule, s
 	return schedules, true
 }
 
-func (r *ScheduleRepository) CacheAllScheduleRepo(value interface{}) {
+func (r *ScheduleRepository) CacheScheduleRepo(org, des, depDate string, value interface{}) {
 	cache := r.Redis.CreateConnection()
 
 	valueJson, err := json.Marshal(value)
@@ -108,7 +108,7 @@ func (r *ScheduleRepository) CacheAllScheduleRepo(value interface{}) {
 	}
 
 	var ctx = context.Background()
-	err = cache.Set(ctx, "schedule:all", valueJson, 0).Err()
+	err = cache.Set(ctx, "schedule:"+org+":"+des+":"+depDate, valueJson, 0).Err()
 
 	if err != nil {
 		log.Fatal(err.Error())
