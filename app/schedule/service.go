@@ -5,7 +5,7 @@ import (
 )
 
 type IScheduleService interface {
-	ScheduleService(org string, des string, depDat string) (int, string, interface{})
+	ScheduleService(org, des, depDate string) (int, string, interface{})
 }
 
 type ScheduleService struct {
